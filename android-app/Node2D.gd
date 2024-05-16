@@ -4,9 +4,6 @@ var gyro: Vector3 = Vector3.ZERO
 var udp := PacketPeerUDP.new()
 var connected = false
 
-func _ready():
-	udp.connect_to_host(IP.resolve_hostname("leandro.local"), 5005)
-
 func _process(delta):
 	var input = Input.get_gyroscope()
 	
@@ -21,7 +18,7 @@ func _process(delta):
 		"y": gyro.y,
 		"z": gyro.z,
 	}
-	
+	udp.connect_to_host($LeandroIP.text, 5005)
 	udp.put_packet(JSON.stringify(data_to_send).to_utf8_buffer())
 
 func reset_gyro():
