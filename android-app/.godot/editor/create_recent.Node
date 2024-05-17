@@ -1,5 +1,9 @@
-LineEdit
+VBoxContainer
+HBoxContainer
 Button
-Control
+HSplitContainer
 VSplitContainer
+TouchScreenButton
+Control
+LineEdit
 Label

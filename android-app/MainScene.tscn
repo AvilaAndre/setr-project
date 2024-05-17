@@ -13,7 +13,7 @@ font_color = Color(1, 0.0117647, 0.0117647, 1)
 default_font_size = 48
 
 [sub_resource type="Theme" id="Theme_q1pwt"]
-default_font_size = 36
+default_font_size = 48
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -23,6 +23,43 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_27wix")
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Left" type="Button" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+flat = true
+
+[node name="VBox" type="VBoxContainer" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="Up" type="Button" parent="HBox/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+flat = true
+
+[node name="Down" type="Button" parent="HBox/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+flat = true
+
+[node name="Right" type="Button" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "okmatilde"
+flat = true
 
 [node name="Gyro" type="Label" parent="."]
 layout_mode = 1
@@ -53,24 +90,40 @@ label_settings = SubResource("LabelSettings_s0kcc")
 
 [node name="ResetGyro" type="Button" parent="."]
 layout_mode = 1
-anchors_preset = 5
+anchors_preset = 7
 anchor_left = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-offset_left = -4.0
-offset_right = 4.0
-offset_bottom = 8.0
+anchor_bottom = 1.0
+offset_left = -68.5
+offset_top = -75.0
+offset_right = 68.5
 grow_horizontal = 2
+grow_vertical = 0
 theme = SubResource("Theme_llhod")
 text = "Reset"
 
 [node name="LeandroIP" type="LineEdit" parent="."]
 layout_mode = 1
-offset_right = 67.0625
-offset_bottom = 31.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -172.5
+offset_right = 172.5
+offset_bottom = 75.0
+grow_horizontal = 2
 theme = SubResource("Theme_q1pwt")
-text = "192.168.221.94"
+text = "192.168.97.94"
 placeholder_text = "Leandro's IP"
 expand_to_text_length = true
 flat = true
 
+[connection signal="button_down" from="HBox/Left" to="." method="_on_button_down" binds= ["left"]]
+[connection signal="button_up" from="HBox/Left" to="." method="_on_button_up" binds= ["left"]]
+[connection signal="button_down" from="HBox/VBox/Up" to="." method="_on_button_down" binds= ["up"]]
+[connection signal="button_up" from="HBox/VBox/Up" to="." method="_on_button_up" binds= ["up"]]
+[connection signal="button_down" from="HBox/VBox/Down" to="." method="_on_button_down" binds= ["down"]]
+[connection signal="button_up" from="HBox/VBox/Down" to="." method="_on_button_up" binds= ["down"]]
+[connection signal="button_down" from="HBox/Right" to="." method="_on_button_down" binds= ["right"]]
+[connection signal="button_up" from="HBox/Right" to="." method="_on_button_up" binds= ["right"]]
 [connection signal="pressed" from="ResetGyro" to="." method="reset_gyro"]
