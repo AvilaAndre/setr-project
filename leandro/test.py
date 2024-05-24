@@ -15,32 +15,32 @@ def main():
     pwma = 0
     pwmb = 0
 
-    while True:
-        print("left")
-        for pwma in range(0, 100):
-            bot.left()
-            bot.setPWMA(pwma)
-            bot.setPWMB(pwma)
-            time.sleep(0.1)
-        print("right")
-        for pwmb in range(0, 100):
-            bot.right()
-            bot.setPWMA(pwmb)
-            bot.setPWMB(pwmb)
-            time.sleep(0.1)
-        print("forward")
-        for pwma in range(0, 100):
-            bot.forward()
-            bot.setPWMA(pwma)
-            bot.setPWMB(pwma)
-            time.sleep(0.1)
-        print("backward")
-        for pwmb in range(0, 100):
-            bot.backward()
-            bot.setPWMA(pwmb)
-            bot.setPWMB(pwmb)
-            time.sleep(0.1)
-        bot.stop()
+    print("left")
+    for pwma in range(0, 100):
+        bot.left()
+        bot.setPWMA(pwma)
+        bot.setPWMB(pwma)
+        time.sleep(0.1)
+    print("right")
+    for pwmb in range(0, 100):
+        bot.right()
+        bot.setPWMA(pwmb)
+        bot.setPWMB(pwmb)
+        time.sleep(0.1)
+    print("forward")
+    for pwma in range(0, 100):
+        bot.forward()
+        bot.setPWMA(pwma)
+        bot.setPWMB(pwma)
+        time.sleep(0.1)
+    print("backward")
+    for pwmb in range(0, 100):
+        bot.backward()
+        bot.setPWMA(pwmb)
+        bot.setPWMB(pwmb)
+        time.sleep(0.1)
+
+    bot.stop()
 
 
 if __name__ == "__main__":

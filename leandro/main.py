@@ -1,8 +1,8 @@
 from picamera2.outputs import FileOutput
 from picamera2.encoders import JpegEncoder
 from picamera2 import Picamera2
+import multiprocessing as mp
 import io
-import cv2
 import base64
 import socket
 import json
@@ -16,51 +16,54 @@ UDP_STREAM_PORT = 4242
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-speed = 10
-
-output_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-peers = []
+speed = 40
 
 
 class StreamingOutput(io.BufferedIOBase):
-    def __init__(self):
+    def __init__(self, recv_pipe):
         self.frame = None
-        # self.condition = Condition()
+        self.output_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.peers = []
+        self.recv_pipe = recv_pipe
 
     def write(self, buf):
-        # with self.condition:
         self.frame = buf
 
-        message = base64.b64encode(buf)
-        print("wrote frame", peers)
+        if self.recv_pipe.poll():
+            self.peers = self.recv_pipe.recv()
 
-        if output_socket:
-            for (peer_ip, _peer_port) in peers:
+        message = base64.b64encode(buf)
+
+        if self.output_socket:
+            for (peer_ip, _peer_port) in self.peers:
                 try:
-                    output_socket.sendto(
+                    self.output_socket.sendto(
                         bytes(message), (peer_ip, UDP_STREAM_PORT))
                 except:
                     pass
-        # self.condition.notify_all()
 
 
-def camera():
+def camera(recv_pipe):
+    transmitting = True
+
     picam2 = Picamera2()
     video_config = picam2.create_video_configuration({"size": (1280, 720)})
+    picam2.video_configuration.controls.FrameRate = 60.0
     picam2.configure(video_config)
     encoder = JpegEncoder()
 
-    output = StreamingOutput()
+    output = StreamingOutput(recv_pipe)
 
-    # with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-    # sock.connect((UDP_IP, UDP_STREAM_PORT))
     picam2.start_recording(encoder, FileOutput(output))
 
-    return picam2
+    while transmitting:
+        pass
+
+    picam2.stop_recording()
 
 
-def main():
-    picam2 = camera()
+def cmd_receiver(send_pipe):
+    peers = []
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -72,13 +75,13 @@ def main():
     while True:
         data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
         if addr not in peers:
+            print("new peer added", addr)
             peers.append(addr)
+            send_pipe.send(peers)
 
         try:
             data = data.decode('utf-8')
             parsed = json.loads(data)
-            # print("received: %s" % parsed)
-            # print("received from", addr)
 
             if (parsed["type"] == "state"):
                 if (parsed["up"]):
@@ -104,8 +107,24 @@ def main():
         except:
             print("error occurred", addr)
 
-    picam2.stop_recording()
-
 
 if __name__ == "__main__":
-    main()
+    ctx = mp.get_context("spawn")
+
+    camera_peers_conn, cmd_receiver_peers_conn = ctx.Pipe()
+
+    camera_p = ctx.Process(target=camera, args=(camera_peers_conn, ))
+    cmd_receiver_p = ctx.Process(
+        target=cmd_receiver, args=(cmd_receiver_peers_conn, ))
+
+    camera_p.start()
+    cmd_receiver_p.start()
+
+    try:
+        while True:
+            pass
+    except KeyboardInterrupt:
+        print("Received exit, exiting")
+        camera_p.kill()
+        cmd_receiver_p.kill()
+
