@@ -8,6 +8,7 @@ import socket
 import json
 from AlphaBot2 import AlphaBot2
 import RPi.GPIO as GPIO
+import scheddl
 
 UDP_IP = ""  # leaving it empty will ensure every local address
 UDP_CMDS_PORT = 5005
@@ -57,7 +58,12 @@ def camera(recv_pipe):
     picam2.start_recording(encoder, FileOutput(output))
 
     while transmitting:
-        pass
+        scheddl.set_deadline(
+            200 * 1000 * 1000,  # runtime in nanoseconds
+            200 * 1000 * 1000,  # deadline in nanoseconds
+            500 * 1000 * 1000  # time period in nanoseconds
+        )
+        scheddl.sched_yield()
 
     picam2.stop_recording()
 
@@ -73,6 +79,11 @@ def cmd_receiver(send_pipe):
     bot.stop()
 
     while True:
+        scheddl.set_deadline(
+            200 * 1000 * 1000,  # runtime in nanoseconds
+            400 * 1000 * 1000,  # deadline in nanoseconds
+            2000 * 1000 * 1000  # time period in nanoseconds
+        )
         data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
         if addr not in peers:
             print("new peer added", addr)
@@ -107,6 +118,8 @@ def cmd_receiver(send_pipe):
         except:
             print("error occurred", addr)
 
+        scheddl.sched_yield()
+
 
 if __name__ == "__main__":
     ctx = mp.get_context("spawn")
@@ -122,9 +135,13 @@ if __name__ == "__main__":
 
     try:
         while True:
-            pass
+            scheddl.set_deadline(
+                200 * 1000 * 1000,  # runtime in nanoseconds
+                400 * 1000 * 1000,  # deadline in nanoseconds
+                1000 * 1000 * 1000,  # time period in nanoseconds
+            )
+            scheddl.sched_yield()
     except KeyboardInterrupt:
         print("Received exit, exiting")
         camera_p.kill()
         cmd_receiver_p.kill()
-
