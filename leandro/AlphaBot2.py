@@ -133,12 +133,12 @@ class AlphaBot2(object):
         x = -x
 
         # clamp values
-        x = clamp(x, -60, 60)
-        y = clamp(y, -60, 60)
+        x = clamp(x, -90, 90)
+        y = clamp(y, -90, 90)
 
         # normalize
-        x = (x + 60)/120
-        y = (y + 60)/120
+        x = (x + 90)/180
+        y = (y + 90)/180
 
         # the camera has limits
         x = clamp(x, 0.25, 0.85)

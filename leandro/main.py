@@ -49,8 +49,8 @@ def camera(recv_pipe):
     transmitting = True
 
     picam2 = Picamera2()
-    video_config = picam2.create_video_configuration({"size": (1280, 720)})
-    picam2.video_configuration.controls.FrameRate = 60.0
+    video_config = picam2.create_video_configuration({"size": (640, 360)})
+    picam2.video_configuration.controls.FrameRate = 30.0
     picam2.configure(video_config)
     encoder = JpegEncoder()
 
@@ -60,6 +60,11 @@ def camera(recv_pipe):
 
     while transmitting:
         continue
+        scheddl.set_deadline(
+            15_000_000,  # runtime in nanoseconds
+            20_000_000,  # deadline in nanoseconds
+            22_000_000  # time period in nanoseconds
+        )
         scheddl.set_deadline(
             200 * 1000 * 1000,  # runtime in nanoseconds
             200 * 1000 * 1000,  # deadline in nanoseconds
