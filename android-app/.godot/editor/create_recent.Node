@@ -1,3 +1,6 @@
+TextureRect
+Sprite2D
+VideoStreamPlayer
 VBoxContainer
 HBoxContainer
 Button

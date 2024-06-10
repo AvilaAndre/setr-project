@@ -2,6 +2,14 @@ import RPi.GPIO as GPIO
 from PCA9685 import PCA9685
 
 
+def clamp(val: float, mini: float, maxi: float) -> float:
+    if (val < mini):
+        return mini
+    elif (val > maxi):
+        return maxi
+    return val
+
+
 class AlphaBot2(object):
 
     def __init__(self, ain1=12, ain2=13, ena=6, bin1=20, bin2=21, enb=26):
@@ -100,22 +108,44 @@ class AlphaBot2(object):
             self.PWMB.ChangeDutyCycle(0 - left)
 
     """
-    x goes from -180 to 180
-    y goes from -180 to 180
+    takes the phone angles and converts to the camera limits
+    clamps the x and y to be between -40 and 40
+
+    servo x limit from -160 to 100
+    -40         40
+    |------------|
+
+    -160       100
+    |------------|
+    offset: -30
+
+    servo y limit from -100 to 180
+    -40         40
+    |------------|
+
+    -100       180
+    |------------|
+    offset: 40
+
     """
 
     def moveCameraTo(self, x, y):
         x = -x
-        if (x < -180):
-            x = -180
-        elif (x > 180):
-            x = 180
-        x = (x + 180)/360 * self.ServoLimit
-        if (y < -180):
-            y = -180
-        elif (y > 180):
-            y = 180
-        y = (y + 180)/360 * self.ServoLimit
+
+        # clamp values
+        x = clamp(x, -60, 60)
+        y = clamp(y, -60, 60)
+
+        # normalize
+        x = (x + 60)/120
+        y = (y + 60)/120
+
+        # the camera has limits
+        x = clamp(x, 0.25, 0.85)
+        y = clamp(y, 0.2, 0.95)
+
+        y = y * self.ServoLimit
+        x = x * self.ServoLimit
 
         self.ServoPWM.setServoPulse(0, y)
         self.ServoPWM.setServoPulse(1, x)

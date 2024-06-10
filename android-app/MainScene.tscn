@@ -1,6 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://cdmui8c0kmu7b"]
+[gd_scene load_steps=12 format=3 uid="uid://cdmui8c0kmu7b"]
 
 [ext_resource type="Script" path="res://Node2D.gd" id="1_27wix"]
+[ext_resource type="Texture2D" uid="uid://b3n35g3oi0frd" path="res://icon.svg" id="2_rww78"]
+[ext_resource type="Script" path="res://VideoStream.gd" id="2_sydm4"]
+[ext_resource type="Texture2D" uid="uid://dfrt4wj2mcvru" path="res://assets/Sprites/transparent-dark/transparentDark22.png" id="4_2ldar"]
+[ext_resource type="Texture2D" uid="uid://oxx4a4thtff2" path="res://assets/Sprites/transparent-dark/transparentDark24.png" id="5_070qm"]
+[ext_resource type="Texture2D" uid="uid://5ar4hhgkuvbh" path="res://assets/Sprites/transparent-dark/transparentDark25.png" id="6_jfngm"]
+[ext_resource type="Texture2D" uid="uid://bbvurf31pvspv" path="res://assets/Sprites/transparent-dark/transparentDark23.png" id="7_ctn63"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_xr7me"]
 font_size = 48
@@ -24,6 +30,17 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_27wix")
 
+[node name="VideoStream" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_rww78")
+stretch_mode = 6
+script = ExtResource("2_sydm4")
+
 [node name="HBox" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -36,7 +53,9 @@ grow_vertical = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+icon = ExtResource("4_2ldar")
 flat = true
+icon_alignment = 1
 
 [node name="VBox" type="VBoxContainer" parent="HBox"]
 layout_mode = 2
@@ -47,19 +66,24 @@ size_flags_stretch_ratio = 2.0
 [node name="Up" type="Button" parent="HBox/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
+icon = ExtResource("5_070qm")
 flat = true
+icon_alignment = 1
 
 [node name="Down" type="Button" parent="HBox/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
+icon = ExtResource("6_jfngm")
 flat = true
+icon_alignment = 1
 
 [node name="Right" type="Button" parent="HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "okmatilde"
+icon = ExtResource("7_ctn63")
 flat = true
+icon_alignment = 1
 
 [node name="Gyro" type="Label" parent="."]
 layout_mode = 1
