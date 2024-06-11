@@ -27,8 +27,13 @@ class StreamingOutput(io.BufferedIOBase):
         self.output_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.peers = []
         self.recv_pipe = recv_pipe
+        self.times_rec = []
+        self.DEBUG = False
 
     def write(self, buf):
+        if self.DEBUG:
+            start = time.time_ns()
+
         self.frame = buf
 
         if self.recv_pipe.poll():
@@ -43,6 +48,20 @@ class StreamingOutput(io.BufferedIOBase):
                         bytes(message), (peer_ip, UDP_STREAM_PORT))
                 except:
                     pass
+
+        if self.DEBUG:
+            self.times_rec.append(time.time_ns() - start)
+
+        if self.DEBUG:
+            total = 0
+            maxi = -1
+            for t in self.times_rec:
+                total = total + t
+                if t > maxi:
+                    maxi = t
+            if len(self.times_rec):
+                print("camera media:", total /
+                      len(self.times_rec), "max", maxi)
 
 
 def camera(recv_pipe):
@@ -60,17 +79,6 @@ def camera(recv_pipe):
 
     while transmitting:
         continue
-        scheddl.set_deadline(
-            15_000_000,  # runtime in nanoseconds
-            20_000_000,  # deadline in nanoseconds
-            22_000_000  # time period in nanoseconds
-        )
-        scheddl.set_deadline(
-            200 * 1000 * 1000,  # runtime in nanoseconds
-            200 * 1000 * 1000,  # deadline in nanoseconds
-            500 * 1000 * 1000  # time period in nanoseconds
-        )
-        scheddl.sched_yield()
 
     picam2.stop_recording()
 
